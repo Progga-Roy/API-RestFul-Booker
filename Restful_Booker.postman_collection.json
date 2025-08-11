@@ -1,0 +1,633 @@
+{
+	"info": {
+		"_postman_id": "4ed73ca1-c1de-410b-82aa-cd390577ed90",
+		"name": "Restful_Booker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43134942"
+	},
+	"item": [
+		{
+			"name": "Create_Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Status Code Check\r",
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if (statusCode == 200) {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"id\", jsonData.bookingid);\r",
+							"    pm.test(\"Request successful\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 400) {\r",
+							"    pm.test(\"Not Found!\", function () {\r",
+							"        pm.response.to.have.status(400);\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 403) {\r",
+							"    pm.test(\"Forbidden\", function () {\r",
+							"        pm.response.to.have.status(403);\r",
+							"    })\r",
+							"}\r",
+							"else {\r",
+							"    pm.test(\"Unexpected status code\")\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// First Name\r",
+							"let firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
+							"console.log(firstName);\r",
+							"pm.environment.set(\"firstname\",firstName);\r",
+							"\r",
+							"//Last Name\r",
+							"let lastName = pm.variables.replaceIn(\"{{$randomLastName}}\");\r",
+							"console.log(lastName);\r",
+							"pm.environment.set(\"lastname\",lastName);\r",
+							"\r",
+							"//Total Price\r",
+							"let totalPrice = pm.variables.replaceIn(\"{{$randomInt}}\");\r",
+							"console.log(totalPrice);\r",
+							"pm.environment.set(\"totalprice\",totalPrice);\r",
+							"\r",
+							"//Deposit Paid\r",
+							"let depositpaid = pm.variables.replaceIn(\"{{$randomBoolean}}\")\r",
+							"pm.environment.set(\"depositpaid\",depositpaid)\r",
+							"\r",
+							"//Booking Dates\r",
+							"const moment = require('moment');\r",
+							"const today = moment();\r",
+							"// Checkin\r",
+							"let checkin = today.subtract(3,'Y').format(\"YYYY-DD-MM\");\r",
+							"pm.environment.set(\"checkin\",checkin);\r",
+							"// Checkout\r",
+							"let checkout = today.add(1,'M').format(\"YYYY-DD-MM\");\r",
+							"pm.environment.set(\"checkout\",checkout);\r",
+							"\r",
+							"//Additional Needs\r",
+							"let additionalneeds = pm.variables.replaceIn(\"{{$randomCompanyName}}\");\r",
+							"pm.environment.set(\"additionalneeds\",additionalneeds)\r",
+							"console.log(additionalneeds);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/booking/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if (statusCode == 200) {\r",
+							"    let jsonData = pm.response.json();\r",
+							"\r",
+							"    //First name validation\r",
+							"    pm.test(\"First name validation\", function () {\r",
+							"        pm.expect(jsonData.firstname).to.eql(pm.environment.get(\"firstname\"))\r",
+							"    })\r",
+							"\r",
+							"    //Last name validation\r",
+							"    pm.test(\"Last name validation\", function () {\r",
+							"        pm.expect(jsonData.lastname).to.eql(pm.environment.get(\"lastname\"))\r",
+							"    })\r",
+							"\r",
+							"    //Total price validation\r",
+							"    pm.test(\"Total price validation\", function () {\r",
+							"        pm.expect(jsonData.totalprice).to.eql(parseInt(pm.environment.get(\"totalprice\")))\r",
+							"    })\r",
+							"\r",
+							"    //Deposit paid validation\r",
+							"    pm.test(\"Deposit paid validation\", function () {\r",
+							"        pm.expect(jsonData.depositpaid.toString()).to.eql(pm.environment.get(\"depositpaid\"));\r",
+							"    })\r",
+							"\r",
+							"    // Checking in date validation\r",
+							"    pm.test(\"Checking in date validation\", function () {\r",
+							"        pm.expect(jsonData.bookingdates.checkin).to.eql(pm.environment.get(\"checkin\"));\r",
+							"    })\r",
+							"\r",
+							"    // Checking out date validation\r",
+							"    pm.test(\"Checking out date validation\", function () {\r",
+							"        pm.expect(jsonData.bookingdates.checkout).to.eql(pm.environment.get(\"checkout\"));\r",
+							"    })\r",
+							"\r",
+							"    // Additional needs validation\r",
+							"    pm.test(\"Additional needs validation\", function () {\r",
+							"        pm.expect(jsonData.additionalneeds).to.eql(pm.environment.get(\"additionalneeds\"));\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 404) {\r",
+							"    pm.test(\"Not found!\");\r",
+							"}\r",
+							"else {\r",
+							"    pm.test(\"Something went wrong!\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token_Generator",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Status Code Check\r",
+							"\r",
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if (statusCode == 200) {\r",
+							"    // Set token in the Environment\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"token\", jsonData.token);\r",
+							"    pm.test(\"Request successful\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 400) {\r",
+							"    pm.test(\"Not Found!\", function () {\r",
+							"        pm.response.to.have.status(400);\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 403) {\r",
+							"    pm.test(\"Forbidden\", function () {\r",
+							"        pm.response.to.have.status(403);\r",
+							"    })\r",
+							"}\r",
+							"else {\r",
+							"    pm.test(\"Unexpected status code\")\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update_Booking",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set first name in environment\r",
+							"let firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\")\r",
+							"pm.environment.set(\"firstName\",firstName);\r",
+							"\r",
+							"// Set last name in environment\r",
+							"let lastName = pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+							"pm.environment.set(\"lastName\",lastName);\r",
+							"\r",
+							"//Set total price in environment \r",
+							"let totalPrice = pm.variables.replaceIn(\"{{$randomInt}}\")\r",
+							"pm.environment.set(\"totalPrice\",totalPrice);\r",
+							"\r",
+							"//Set depositpaid in environment \r",
+							"let depositPaid = pm.variables.replaceIn(\"{{$randomBoolean}}\")\r",
+							"pm.environment.set(\"depositPaid\",depositPaid);\r",
+							"\r",
+							"// Set booking dates in environment \r",
+							"// Checkin\r",
+							"let moment = require('moment');\r",
+							"let today = moment();\r",
+							"let checkIn = today.add(3,'d').format(\"YYYY-MM-DD\");\r",
+							"pm.environment.set(\"checkIn\",checkIn)\r",
+							"//Checkout\r",
+							"let checkOut = today.add(10,'d').format(\"YYYY-MM-DD\");\r",
+							"pm.environment.set(\"checkOut\",checkOut)\r",
+							"\r",
+							"// Set additional needs in environment\r",
+							"let  additionalNeeds = pm.variables.replaceIn(\"{{$randomPhoneNumber}}\")\r",
+							"pm.environment.set(\"additionalNeeds\",additionalNeeds);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Status Code Check\r",
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if (statusCode == 200) {\r",
+							"\r",
+							"    pm.test(\"Request successful\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 400) {\r",
+							"    pm.test(\"Not Found!\", function () {\r",
+							"        pm.response.to.have.status(400);\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 403) {\r",
+							"    pm.test(\"Forbidden\", function () {\r",
+							"        pm.response.to.have.status(403);\r",
+							"    })\r",
+							"}\r",
+							"else {\r",
+							"    pm.test(\"Unexpected status code\")\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstName}}\",\r\n    \"lastname\" : \"{{lastName}}\",\r\n    \"totalprice\" : {{totalPrice}},\r\n    \"depositpaid\" : {{depositPaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkIn}}\",\r\n        \"checkout\" : \"{{checkOut}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalNeeds}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "After_Update_Boooking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if(statusCode == 200){\r",
+							"      let jsonData = pm.response.json();\r",
+							"\r",
+							"//First name validation\r",
+							"pm.test(\"Updated First name validation\",function(){\r",
+							"    pm.expect(jsonData.firstname).to.eql(pm.environment.get(\"firstName\"))\r",
+							"})\r",
+							"\r",
+							"//Last name validation\r",
+							"pm.test(\"Updated Last name validation\",function(){\r",
+							"    pm.expect(jsonData.lastname).to.eql(pm.environment.get(\"lastName\"))\r",
+							"})\r",
+							"\r",
+							"//Total price validation\r",
+							"pm.test(\"Updated Total price validation\", function(){\r",
+							"    pm.expect(jsonData.totalprice).to.eql(parseInt(pm.environment.get(\"totalPrice\")))\r",
+							"})\r",
+							"\r",
+							"//Deposit paid validation\r",
+							"pm.test(\"Updated Deposit paid validation\", function(){\r",
+							"    pm.expect(jsonData.depositpaid.toString()).to.eql(pm.environment.get(\"depositPaid\"));\r",
+							"})\r",
+							"\r",
+							"// Checking in date validation\r",
+							"pm.test(\"Updated Checking in date validation\", function(){\r",
+							"    pm.expect(jsonData.bookingdates.checkin).to.eql(pm.environment.get(\"checkIn\"));\r",
+							"})\r",
+							"\r",
+							"// Checking out date validation\r",
+							"pm.test(\"Updated Checking out date validation\", function(){\r",
+							"    pm.expect(jsonData.bookingdates.checkout).to.eql(pm.environment.get(\"checkOut\"));\r",
+							"})\r",
+							"\r",
+							"// Additional needs validation\r",
+							"pm.test(\"Updated Additional needs mobile number validation\", function () {\r",
+							"    pm.expect(jsonData.additionalneeds).to.eql(pm.environment.get(\"additionalNeeds\"));\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode == 404){\r",
+							"    pm.test(\"Not found!\");\r",
+							"}\r",
+							"else{\r",
+							"     pm.test(\"Something went wrong!\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partial_Update_Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"//Status Code Check\r",
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if (statusCode == 200) {\r",
+							"    pm.test(\"Request successful\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"        // Set Partial Updated First Name in Environment\r",
+							"        let FIRSTNAME = pm.variables.replaceIn(\"{{$randomFirstName}}\")\r",
+							"        pm.environment.set(\"firstname\", FIRSTNAME);\r",
+							"\r",
+							"        // Set Partial Updated Last Name in Environment\r",
+							"        let LASTNAME = pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+							"        pm.environment.set(\"lastname\", LASTNAME);\r",
+							"\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 400) {\r",
+							"    pm.test(\"Not Found!\", function () {\r",
+							"        pm.response.to.have.status(400);\r",
+							"    })\r",
+							"}\r",
+							"else if (statusCode == 403) {\r",
+							"    pm.test(\"Forbidden\", function () {\r",
+							"        pm.response.to.have.status(403);\r",
+							"    })\r",
+							"}\r",
+							"else {\r",
+							"    pm.test(\"Unexpected status code\")\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{FIRSTNAME}}\",\r\n    \"lastname\" : \"{{LASTNAME}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "After_Partial_Update_Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if(statusCode == 200){\r",
+							"\r",
+							"   let jsonData = pm.response.json();\r",
+							"\r",
+							"//After Partial Updated Booking First Name validation\r",
+							"pm.test(\"After Partial Updated Booking First Name validation\",function(){\r",
+							"    pm.expect(jsonData.firstname).to.eql(pm.environment.get(\"FIRSTNAME\"));\r",
+							"})\r",
+							"\r",
+							"//After Partial Updated Booking First Name validation\r",
+							"pm.test(\"After Partial Updated Booking Last Name validation\",function(){\r",
+							"    pm.expect(jsonData.lastname).to.eql(pm.environment.get(\"LASTNAME\"));\r",
+							"\r",
+							"})\r",
+							"}\r",
+							"else if(statusCode == 404){\r",
+							"    pm.test(\"Not Found!\")\r",
+							"    \r",
+							"}\r",
+							"else{\r",
+							"    pm.test(\"Unexpected Status Code!\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Status Code Check\r",
+							"let statusCode = pm.response.code;\r",
+							"\r",
+							"if(statusCode == 201){\r",
+							"pm.test(\"Successfully Created\",function(){\r",
+							"    pm.response.to.have.status(201);\r",
+							" \r",
+							"})\r",
+							"}else if(statusCode == 403){\r",
+							"pm.test(\"Access Forbidden\",function(){\r",
+							"    pm.response.to.have.status(403);\r",
+							"\r",
+							"})\r",
+							"}else if(statusCode == 405){\r",
+							"pm.test(\"Method Not Allowed\",function(){\r",
+							"    pm.response.to.have.status(405);\r",
+							"    \r",
+							"})\r",
+							"}\r",
+							"else{\r",
+							"    pm.test(\"Something went wrong!\")\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
