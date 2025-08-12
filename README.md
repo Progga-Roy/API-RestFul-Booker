@@ -40,11 +40,11 @@ npm install -g newman-reporter-htmlextra
 Clone this repository
 ```
 - git clone https://github.com/your-username/restful-booker-api-testing.git
- cd restful-booker-api-testing
+- cd restful-booker-api-testing
 ```
   
-## 2. Import the Postman Collection & Environment ##
+## Import the Postman Collection & Environment ##
 - Open Postman
 - Click Import
-- Select the collection *.postman_collection.json and
-  environment *.postman_environment.json files from the repository
+- Select the collection **.postman_collection.json and
+  environment **.postman_environment.json files from the repository
