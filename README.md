@@ -1,20 +1,20 @@
 
-## 🌐 RESTful-Booker API Testing with Postman & Newman 
-## 📖 Overview
+## RESTful-Booker API Testing with Postman & Newman 
+## Overview
 This project demonstrates automated API testing for the [RESTful-Booker API](https://restful-booker.herokuapp.com/) using **[Postman](https://www.postman.com/)** and **[Newman](https://www.npmjs.com/package/newman)**.It includes a complete test collection covering CRUD operations with dynamic data handling, environment variables, pre-request scripts, and detailed HTML reports.
 
-## ✨ Key Features
-- ✅ Full CRUD Coverage: GET, POST, PUT, PATCH, DELETE
-- 🔄 Dynamic Data Generation using Postman variables and scripts
-- 🌍 Environment Management for switching between different setups
-- 📝 Pre-request Scripts for data preparation
-- 🔍 Assertions & Validations with JavaScript test scripts
-- 📊 Detailed HTML Reports with Newman HTML Extra Reporter
+## Key Features
+- Full CRUD Coverage: GET, POST, PUT, PATCH, DELETE
+- Dynamic Data Generation using Postman variables and scripts
+- Environment Management for switching between different setups
+- Pre-request Scripts for data preparation
+- Assertions & Validations with JavaScript test scripts
+- Detailed HTML Reports with Newman HTML Extra Reporter
 
-## 📄 API Documentation
+## API Documentation
 - Official RESTful-Booker API Docs → **[RESTful-Booker API Reference](https://restful-booker.herokuapp.com/apidoc/index.html#api-Booking)**
   
-## 🛠 Technologies Used
+## Technologies Used
 | Tool / Tech                    | Purpose                                             |
 | ------------------------------ | --------------------------------------------------- |
 | **Postman**                    | API request creation, scripting, and test execution |
@@ -22,7 +22,7 @@ This project demonstrates automated API testing for the [RESTful-Booker API](htt
 | **Newman HTML Extra Reporter** | Enhanced HTML reporting                             |
 | **Node.js**                    | Runtime environment for Newman                      |
 
-## 📌 Prerequisites
+## Prerequisites
 Before running the tests, ensure you have:
 - Node.js installed → **[Download Here](https://nodejs.org/en/download)** 
 - Postman installed → **[Download Here](https://www.postman.com/downloads/)**
@@ -37,7 +37,7 @@ Install Newman HTML Extra Reporter globally
 npm install -g newman-reporter-htmlextra
 ```
   
-📥 Installation**
+ ## Installation
 Clone this repository
 ```
 git clone https://github.com/your-username/restful-booker-api-testing.git
@@ -50,7 +50,7 @@ Import the Postman Collection & Environment
 - Select the collection (*.postman_collection.json) and
   environment (*.postman_environment.json) files from the repository
 
-## 🚀 Running the Tests
+## Running the Tests
 Run in Command Prompt (CMD)
 ```
 newman run restful-booker.postman_collection.json \
@@ -64,76 +64,76 @@ newman run restful-booker.postman_collection.json \
   -r cli,htmlextra
 ```
 
-## 🧪 Test Scenarios
+## Test Scenarios
 **_1️⃣ Create a New Booking_**
 - Method: POST
 - Request URL : **[https://restful-booker.herokuapp.com/booking/](https://restful-booker.herokuapp.com/booking/)**
 - Pre-request Script: Generates random booking details :
-  ```
-  
-          // Set First Name in the Environment
-          let firstName = pm.variables.replaceIn("{{$randomFirstName}}");
-          console.log(firstName);
-          pm.environment.set("firstname",firstName);
+ ```
+ // Set First Name in the Environment
+let firstName = pm.variables.replaceIn("{{$randomFirstName}}");
+console.log(firstName);
+pm.environment.set("firstname",firstName);
 
-          // Set Last Name in the Environment 
-          let lastName = pm.variables.replaceIn("{{$randomLastName}}");
-          console.log(lastName);
-          pm.environment.set("lastname",lastName);
+// Set Last Name in the Environment 
+let lastName = pm.variables.replaceIn("{{$randomLastName}}");
+console.log(lastName);
+pm.environment.set("lastname",lastName);
 
-          // Set Total Price in the Environment
-          let totalPrice = pm.variables.replaceIn("{{$randomInt}}");
-          console.log(totalPrice);
-          pm.environment.set("totalprice",totalPrice);
+// Set Total Price in the Environment
+let totalPrice = pm.variables.replaceIn("{{$randomInt}}");
+console.log(totalPrice);
+pm.environment.set("totalprice",totalPrice);
 
-          // Set Deposit Paid in the Environment
-          let depositpaid = pm.variables.replaceIn("{{$randomBoolean}}")
-          pm.environment.set("depositpaid",depositpaid)
+// Set Deposit Paid in the Environment
+let depositpaid = pm.variables.replaceIn("{{$randomBoolean}}")
+pm.environment.set("depositpaid",depositpaid)
 
-          // Set Booking Dates in the Environment
-          const moment = require('moment');
-          const today = moment();
-          // Checkin
-          let checkin = today.subtract(3,'Y').format("YYYY-DD-MM");
-          pm.environment.set("checkin",checkin);
-          // Checkout
-          let checkout = today.add(1,'M').format("YYYY-DD-MM");
-          pm.environment.set("checkout",checkout);
+// Set Booking Dates in the Environment
+const moment = require('moment');
+const today = moment();
+// Checkin
+let checkin = today.subtract(3,'M').format("YYYY-MM-DD");
+pm.environment.set("checkin",checkin);
+// Checkout
+let checkout = today.add(2,'d').format("YYYY-MM-DD");
+pm.environment.set("checkout",checkout);
 
-          // Set Additional Needs in the Environment
-          let additionalneeds = pm.variables.replaceIn("{{$randomCompanyName}}");
-          pm.environment.set("additionalneeds",additionalneeds)
-          console.log(additionalneeds);
+// Set Additional Needs in the Environment
+let additionalneeds = pm.variables.replaceIn("{{$randomCompanyName}}");
+pm.environment.set("additionalneeds",additionalneeds)
+console.log(additionalneeds);
   ```
 - Request Body:
   ```
-         {
-            "firstname" : "{{firstname}}",
-            "lastname" : "{{lastname}}",
-            "totalprice" : {{totalprice}},
-            "depositpaid" : {{depositpaid}},
-            "bookingdates" : {
-            "checkin" : "{{checkin}}",
-            "checkout" : "{{checkout}}"
-              },
-           "additionalneeds" : "{{additionalneeds}}"
-               }
+  {
+    "firstname" : "{{firstname}}",
+    "lastname" : "{{lastname}}",
+    "totalprice" : {{totalprice}},
+    "depositpaid" : {{depositpaid}},
+    "bookingdates" : {
+        "checkin" : "{{checkin}}",
+        "checkout" : "{{checkout}}"
+    },
+    "additionalneeds" : "{{additionalneeds}}"
+  }
+  ```
 - Response Body :
   ```
-              {
-            "bookingid": 2749,
-            "booking": {
-            "firstname": "Evangeline",
-            "lastname": "Effertz",
-            "totalprice": 96,
-            "depositpaid": true,
-            "bookingdates": {
-            "checkin": "2025-05-14",
-            "checkout": "2025-05-16"
-             },
-           "additionalneeds": "Schiller and Sons"
-             }
- 
+    {
+    "bookingid": 314,
+    "booking": {
+        "firstname": "Eda",
+        "lastname": "Anderson",
+        "totalprice": 704,
+        "depositpaid": true,
+        "bookingdates": {
+            "checkin": "2025-05-15",
+            "checkout": "2025-05-17"
+        },
+        "additionalneeds": "Effertz Inc"
+     }
+    }
   ```
   
 **_2️⃣ Get Booking Details by ID_**
@@ -143,17 +143,17 @@ newman run restful-booker.postman_collection.json \
 - Request Body : None
 - Response Body :
   ```
-          {
-             "firstname": "Alene",
-             "lastname": "Reynolds",
-             "totalprice": 745,
-             "depositpaid": true,
-             "bookingdates": {
-             "checkin": "2025-05-14",
-             "checkout": "2025-05-16"
-                    },
-            "additionalneeds": "Toy Inc"
-     }
+    {
+    "firstname": "Eda",
+    "lastname": "Anderson",
+    "totalprice": 704,
+    "depositpaid": true,
+    "bookingdates": {
+        "checkin": "2025-05-15",
+        "checkout": "2025-05-17"
+    },
+    "additionalneeds": "Effertz Inc"
+    }
   ```
 
 **_3️⃣ Create Token for Authentication_**
@@ -161,85 +161,86 @@ newman run restful-booker.postman_collection.json \
 - URL: **[https://restful-booker.herokuapp.com/booking/auth](https://restful-booker.herokuapp.com/auth)**
 - Request Body:
 ```
-           {
-          "username" : "admin",
-          "password" : "password123"
-           }
+    {
+    "username" : "admin",
+    "password" : "password123"
+    }       
 ```
 Response Body :
 ```
-          {
-         "token": "dad87424e777fef"
-          }
+    {
+   "token": "dbcf67df90a6989"
+   
+    }
 ```
 **_4️⃣ Update Booking Details_**
 - Method: POST
 - Request URL : **[https://restful-booker.herokuapp.com/booking/:bookingid](https://restful-booker.herokuapp.com/booking/:bookingid)**
-- Pre-request Script: Generates updated details: 
-  ```
-  
-          // Set First Name in the Environment
-          let firstName = pm.variables.replaceIn("{{$randomFirstName}}");
-          console.log(firstName);
-          pm.environment.set("firstname",firstName);
+- Pre-request Script: Generates updated details:
+```
+ // Set First Name in the Environment
+let firstName = pm.variables.replaceIn("{{$randomFirstName}}");
+console.log(firstName);
+pm.environment.set("firstname",firstName);
 
-          // Set Last Name in the Environment 
-          let lastName = pm.variables.replaceIn("{{$randomLastName}}");
-          console.log(lastName);
-          pm.environment.set("lastname",lastName);
+// Set Last Name in the Environment 
+let lastName = pm.variables.replaceIn("{{$randomLastName}}");
+console.log(lastName);
+pm.environment.set("lastname",lastName);
 
-          // Set Total Price in the Environment
-          let totalPrice = pm.variables.replaceIn("{{$randomInt}}");
-          console.log(totalPrice);
-          pm.environment.set("totalprice",totalPrice);
+// Set Total Price in the Environment
+let totalPrice = pm.variables.replaceIn("{{$randomInt}}");
+console.log(totalPrice);
+pm.environment.set("totalprice",totalPrice);
 
-          // Set Deposit Paid in the Environment
-          let depositpaid = pm.variables.replaceIn("{{$randomBoolean}}")
-          pm.environment.set("depositpaid",depositpaid)
+// Set Deposit Paid in the Environment
+let depositpaid = pm.variables.replaceIn("{{$randomBoolean}}")
+pm.environment.set("depositpaid",depositpaid)
 
-          // Set Booking Dates in the Environment
-          const moment = require('moment');
-          const today = moment();
-          // Checkin
-          let checkin = today.subtract(3,'Y').format("YYYY-DD-MM");
-          pm.environment.set("checkin",checkin);
-          // Checkout
-          let checkout = today.add(1,'M').format("YYYY-DD-MM");
-          pm.environment.set("checkout",checkout);
+// Set Booking Dates in the Environment
+const moment = require('moment');
+const today = moment();
+// Checkin
+let checkin = today.subtract(3,'M').format("YYYY-MM-DD");
+pm.environment.set("checkin",checkin);
+// Checkout
+let checkout = today.add(2,'d').format("YYYY-MM-DD");
+pm.environment.set("checkout",checkout);
 
-          // Set Additional Needs in the Environment
-          let additionalneeds = pm.variables.replaceIn("{{$randomCompanyName}}");
-          pm.environment.set("additionalneeds",additionalneeds)
-          console.log(additionalneeds);
-  ```
+// Set Additional Needs in the Environment
+let additionalneeds = pm.variables.replaceIn("{{$randomCompanyName}}");
+pm.environment.set("additionalneeds",additionalneeds)
+console.log(additionalneeds);
+```
 - Request Body:
   ```
-         {
-            "firstname" : "{{firstname}}",
-            "lastname" : "{{lastname}}",
-            "totalprice" : {{totalprice}},
-            "depositpaid" : {{depositpaid}},
-            "bookingdates" : {
-            "checkin" : "{{checkin}}",
-            "checkout" : "{{checkout}}"
-              },
-           "additionalneeds" : "{{additionalneeds}}"
-        }
+  {
+    "firstname" : "{{firstName}}",
+    "lastname" : "{{lastName}}",
+    "totalprice" : {{totalPrice}},
+    "depositpaid" : {{depositPaid}},
+    "bookingdates" : {
+        "checkin" : "{{checkIn}}",
+        "checkout" : "{{checkOut}}"
+    },
+    "additionalneeds" : "{{additionalNeeds}}"
+  }
+  ```
 - Response Body :
   ```
-      {
-          "firstname": "Jed",
-          "lastname": "O'Hara",
-          "totalprice": 571,
-          "depositpaid": true,
-          "bookingdates": {
-         "checkin": "2025-08-18",
-         "checkout": "2025-08-28"
-            },
-         "additionalneeds": "241-666-8263"
-     }
+  {
+    "firstname": "Georgette",
+    "lastname": "Waters",
+    "totalprice": 638,
+    "depositpaid": true,
+    "bookingdates": {
+        "checkin": "2025-08-18",
+        "checkout": "2025-08-28"
+    },
+    "additionalneeds": "763-772-4416"
+  }
   ```
-**_4️⃣ Delete Booking Report_**
+**_5️⃣ Delete Booking Report_**
 - Method: DELETE
 - Request URL : **[https://restful-booker.herokuapp.com/booking/:bookingid](https://restful-booker.herokuapp.com/booking/:bookingid)**
 - Response Body : None
