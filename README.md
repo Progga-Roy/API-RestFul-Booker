@@ -243,3 +243,20 @@ Response Body :
 - Method: DELETE
 - Request URL : **[https://restful-booker.herokuapp.com/booking/:bookingid](https://restful-booker.herokuapp.com/booking/:bookingid)**
 - Response Body : None
+
+## Run Command:
+Run Command for Console:
+```
+newman run Restful_Booker.postman_collection.json -e Restful_Booker.postman_environment.json
+```
+Run Command for Report:
+```
+newman run Restful_Booker.postman_collection.json -e Restful_Booker.postman_environment.json -r cli,htmlextra
+```
+
+## Newman Report Summary
+<img src="Report/Report SS/Report_1.PNG" width="1000"/>
+<img src="Report/Report SS/Report_2.PNG" width="1000"/>
+<img src="Report/Report SS/Report_3.PNG" width="1000"/>
+<img src="Report/Report SS/Report_4.PNG" width="1000"/>
+
