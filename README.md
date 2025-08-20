@@ -40,7 +40,7 @@ npm install -g newman-reporter-htmlextra
  ## Installation
 Clone this repository
 ```
-git clone https://github.com/your-username/restful-booker-api-testing.git
+git clone https://github.com/Progga-Roy/API-RestFul-Booker.git
 cd restful-booker-api-testing
 ```
   
